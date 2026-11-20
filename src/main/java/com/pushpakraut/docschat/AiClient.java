@@ -22,7 +22,7 @@ public class AiClient {
     private final Integer embedDimensions;
 
     record EmbedResponse(List<EmbedItem> data) {}
-    record EmbedItem(int index, float[] embedding) {}
+    record EmbedItem(Integer index, float[] embedding) {} // Gemini omits "index"; Ollama/OpenAI include it
     record ChatResponse(List<Choice> choices) {}
     record Choice(Message message) {}
     record Message(String role, String content) {}
@@ -50,7 +50,14 @@ public class AiClient {
         if (r == null || r.data() == null || r.data().size() != texts.size()) {
             throw new IllegalStateException("The AI service returned no embeddings. Is it running, and is the model available?");
         }
-        return r.data().stream().sorted(Comparator.comparingInt(EmbedItem::index)).map(EmbedItem::embedding).toList();
+        return toVectors(r);
+    }
+
+    /** Orders by "index" when the provider sends it, otherwise keeps the order returned. */
+    static List<float[]> toVectors(EmbedResponse r) {
+        var items = r.data().stream();
+        if (r.data().stream().allMatch(i -> i.index() != null)) items = items.sorted(Comparator.comparingInt(EmbedItem::index));
+        return items.map(EmbedItem::embedding).toList();
     }
 
     public String chat(String system, String user) {
