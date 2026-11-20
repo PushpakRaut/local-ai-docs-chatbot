@@ -1,0 +1,52 @@
+/* Hallmark · shape: app screen · genre: atmospheric · theme: Terminal (deal 2/3, seed private-local-answers-questions-e098·e3868b96·2026-11-20·r0) · redesign: full
+ * nav: top bar, name and the local model line · signature: the chat as a shell session, sources folded under each answer · states: empty, working, error, full
+ * axes: dark/mono/chromatic-green · posture: committed · contrast: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R4 V4 · weakest: H, no glyph picture; the session itself carries the screen, a picture would be decoration in a tool */
+@import url("./tokens.css");
+@import url("./base.css");
+
+body { font-stretch: var(--stretch-body); font-variant-numeric: tabular-nums; min-height: 100vh; }
+h1, h2 { font-weight: var(--display-weight); font-stretch: var(--stretch-display); letter-spacing: var(--tracking-display); line-height: 1.12; }
+h1 { font-size: var(--text-xl); max-width: none; }
+
+.shell { width: 100%; max-width: 960px; margin-inline: auto; padding: 0 var(--space-md) var(--space-2xl); }
+.bar { display: flex; flex-wrap: wrap; gap: var(--space-xs) var(--space-lg); align-items: baseline; justify-content: space-between; padding: var(--space-lg) 0; border-bottom: var(--rule-hair) solid var(--color-rule); margin-bottom: var(--space-lg); }
+.muted { color: var(--color-muted); font-size: var(--text-sm); }
+.accent { color: var(--color-accent); }
+
+.well { background: var(--color-paper-2); border: var(--rule-hair) solid var(--color-rule); padding: var(--space-md); }
+.row { display: flex; gap: var(--space-sm); align-items: center; flex-wrap: wrap; }
+.prompt { color: var(--color-muted); user-select: none; }
+
+.btn { min-height: 40px; padding: 0 var(--space-md); border: var(--rule-hair) solid var(--color-accent); border-radius: 0; background: var(--color-accent); color: var(--color-accent-ink); font-weight: 500; cursor: pointer; transition: background-color var(--dur-micro) steps(1), color var(--dur-micro) steps(1); }
+.btn:hover { background: var(--color-paper); color: var(--color-accent); }
+.btn:active { background: var(--color-accent-wash); color: var(--color-ink); }
+.btn:disabled { background: var(--color-paper-3); color: var(--color-muted); border-color: var(--color-rule-2); cursor: wait; }
+.btn:focus-visible, .input:focus-visible, .file:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; transition: none; }
+
+.input { flex: 1; min-width: 0; min-height: 40px; padding: 0 var(--space-sm); background: var(--color-paper); color: var(--color-ink); border: var(--rule-hair) solid var(--color-rule-2); border-radius: 0; caret-color: var(--color-accent); }
+.input::placeholder { color: var(--color-muted); }
+.input:hover { border-color: var(--color-ink-2); }
+.file { color: var(--color-ink-2); font-size: var(--text-sm); max-width: 100%; }
+.file::file-selector-button { font: inherit; margin-right: var(--space-sm); min-height: 32px; padding: 0 var(--space-sm); background: transparent; color: var(--color-ink); border: var(--rule-hair) solid var(--color-ink-2); border-radius: 0; cursor: pointer; }
+.file::file-selector-button:hover { background: var(--color-paper-3); }
+
+.files { display: flex; flex-wrap: wrap; gap: var(--space-xs); margin-top: var(--space-sm); }
+.files span { padding: var(--space-3xs) var(--space-xs); background: var(--color-accent-wash); color: var(--color-ink); font-size: var(--text-sm); }
+.status { margin-top: var(--space-xs); min-height: 1.5em; }
+
+.session { margin-top: var(--space-lg); min-height: 320px; display: grid; align-content: start; gap: var(--space-md); }
+.empty { color: var(--color-muted); }
+.q { color: var(--color-ink); }
+.q::before { content: "~ $ ask "; color: var(--color-muted); }
+.a { color: var(--color-ink-2); white-space: pre-wrap; padding-left: var(--space-md); border-left: var(--rule-hair) solid var(--color-accent); }
+.src { color: var(--color-muted); font-size: var(--text-sm); white-space: normal; margin-top: var(--space-xs); }
+.src summary { cursor: pointer; width: fit-content; }
+.src summary:hover { color: var(--color-ink-2); }
+.src summary:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.src p { margin-top: var(--space-xs); }
+.err { color: var(--color-ink); background: var(--color-accent-wash); padding: 0 var(--space-2xs); }
+.err::before { content: "error: "; color: var(--color-accent); }
+.working::after { content: "_"; color: var(--color-accent); animation: blink 1s steps(1) 5; }
+@keyframes blink { 50% { opacity: 0; } }
+.ask { margin-top: var(--space-md); border-top: var(--rule-hair) solid var(--color-rule); padding-top: var(--space-md); }

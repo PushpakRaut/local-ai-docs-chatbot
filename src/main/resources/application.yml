@@ -1,0 +1,40 @@
+server:
+  port: ${PORT:8081}
+  # Local default: only this machine can connect. The Docker image sets 0.0.0.0 for hosting.
+  address: ${SERVER_ADDRESS:127.0.0.1}
+  # Behind a hosting proxy (Render), trust X-Forwarded-* so the real host and https are seen.
+  forward-headers-strategy: ${FORWARD_HEADERS:none}
+
+spring:
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+  mvc:
+    problemdetails:
+      enabled: true
+
+app:
+  # Host names this app answers to, comma-separated. Add your hosting URL's host, e.g. docs-chat.onrender.com
+  allowed-hosts: ${ALLOWED_HOSTS:localhost,127.0.0.1}
+  ai:
+    # Any OpenAI-compatible API. Default is Ollama on this machine (free, private).
+    base-url: ${AI_BASE_URL:http://localhost:11434/v1}
+    api-key: ${AI_API_KEY:}
+    chat-model: ${CHAT_MODEL:llama3.2:3b}
+    embed-model: ${EMBED_MODEL:nomic-embed-text}
+    # Optional: ask the provider for shorter embeddings (Gemini supports 768). Empty = provider default.
+    embed-dimensions: ${EMBED_DIMENSIONS:}
+  rag:
+    chunk-size: 800       # characters per chunk
+    chunk-overlap: 150    # characters shared between neighbouring chunks
+    top-k: 4              # chunks sent to the model per question
+  limits:
+    max-files-per-visitor: 3
+    max-pages: 20
+    max-visitors: 200
+    max-total-chunks: 15000   # ~75 MB of 768-number embeddings, fits a 512 MB free server
+    idle-minutes: 30
+    uploads-per-ip: 5         # per rate window
+    questions-per-ip: 30      # per rate window
+    rate-window-minutes: 10

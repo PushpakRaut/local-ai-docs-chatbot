@@ -1,0 +1,20 @@
+# Render Blueprint: free web service, no credit card needed.
+# Hosted version uses Google Gemini's free tier (no card) instead of Ollama, through the same OpenAI-compatible client.
+services:
+  - type: web
+    name: pushpak-docs-chat
+    runtime: docker
+    plan: free
+    envVars:
+      - key: ALLOWED_HOSTS
+        value: pushpak-docs-chat.onrender.com
+      - key: AI_BASE_URL
+        value: https://generativelanguage.googleapis.com/v1beta/openai
+      - key: AI_API_KEY             # free key from aistudio.google.com
+        sync: false
+      - key: CHAT_MODEL
+        value: gemini-2.5-flash
+      - key: EMBED_MODEL
+        value: gemini-embedding-001
+      - key: EMBED_DIMENSIONS
+        value: "768"

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Docs Chat</title>
+<meta name="description" content="Ask questions about your PDFs and get answers with cited pages, from a local AI model.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Martian+Mono:wdth,wght@75..112.5,400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<main class="shell">
+  <header class="bar">
+    <h1>docs-chat</h1>
+    <span class="muted">llama3.2:3b on localhost. Your documents never leave this machine.</span>
+  </header>
+
+  <section class="well" aria-labelledby="up-h">
+    <h2 id="up-h" class="visually-hidden">Upload a PDF</h2>
+    <form id="upload" class="row">
+      <span class="prompt" aria-hidden="true">$ index</span>
+      <label for="file" class="visually-hidden">PDF file</label>
+      <input id="file" class="file" type="file" accept="application/pdf" required>
+      <button class="btn">Upload</button>
+    </form>
+    <div id="uploadMsg" class="status muted" role="status"></div>
+    <div id="files" class="files" aria-label="Indexed files"></div>
+  </section>
+
+  <section aria-labelledby="chat-h">
+    <h2 id="chat-h" class="visually-hidden">Questions and answers</h2>
+    <div id="log" class="session" aria-live="polite">
+      <p class="empty"># Upload a PDF above, then ask about it. Answers cite the file and page.</p>
+    </div>
+    <form id="ask" class="row ask">
+      <span class="prompt" aria-hidden="true">~ $</span>
+      <input id="question" class="input" type="text" placeholder="ask a question about your documents" aria-label="Question" required maxlength="1000" autocomplete="off">
+      <button class="btn">Ask</button>
+    </form>
+  </section>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+
+async function call(url, opts) {
+  const res = await fetch(url, opts);
+  const body = res.status === 204 ? null : await res.json().catch(() => null);
+  if (!res.ok) throw new Error(body?.message || body?.detail || body?.error || `Request failed (${res.status})`);
+  return body;
+}
+
+async function refreshFiles() {
+  const files = await call('/api/documents');
+  $('files').innerHTML = '';
+  files.forEach(f => { const s = document.createElement('span'); s.textContent = f; $('files').append(s); });
+}
+
+$('upload').onsubmit = async (e) => {
+  e.preventDefault();
+  const btn = e.submitter; btn.disabled = true;
+  $('uploadMsg').textContent = 'reading and indexing… larger PDFs take a minute';
+  $('uploadMsg').classList.add('working');
+  try {
+    const fd = new FormData(); fd.append('file', $('file').files[0]);
+    const r = await call('/api/documents', { method: 'POST', body: fd });
+    $('uploadMsg').textContent = `indexed ${r.file}: ${r.pages} pages, ${r.chunks} chunks`;
+    refreshFiles();
+  } catch (err) { $('uploadMsg').textContent = 'error: ' + err.message; }
+  $('uploadMsg').classList.remove('working');
+  btn.disabled = false;
+};
+
+$('ask').onsubmit = async (e) => {
+  e.preventDefault();
+  const question = $('question').value.trim(); if (!question) return;
+  const btn = e.submitter; btn.disabled = true; $('question').value = '';
+  $('log').querySelector('.empty')?.remove();
+  const q = document.createElement('div'); q.className = 'q'; q.textContent = question; $('log').append(q);
+  const a = document.createElement('div'); a.className = 'a working'; a.textContent = 'thinking'; $('log').append(a);
+  try {
+    const r = await call('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ question }) });
+    a.textContent = r.answer;
+    if (r.sources.length) {
+      const d = document.createElement('details'); d.className = 'src';
+      const s = document.createElement('summary'); s.textContent = `Sources (${r.sources.length})`; d.append(s);
+      r.sources.forEach(src => { const p = document.createElement('p'); p.textContent = `${src.file}, page ${src.page}: ${src.excerpt}`; d.append(p); });
+      a.append(d);
+    }
+  } catch (err) { a.textContent = ''; const m = document.createElement('span'); m.className = 'err'; m.textContent = err.message; a.append(m); }
+  a.classList.remove('working');
+  btn.disabled = false;
+  $('question').focus();
+};
+
+refreshFiles().catch(() => {});
+</script>
+</body>
+</html>

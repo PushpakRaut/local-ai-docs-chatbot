@@ -1,0 +1,32 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 647 >>
+stream
+BT /F1 11 Tf 50 780 Td 16 TL (ACME Ltd Employee Handbook \(sample document for demo\)) Tj T* (Working hours: Core hours are 10:00 to 16:00 IST. Employees may start between 8:00 and 10:00.) Tj T* (Leave policy: Every employee gets 24 days of paid leave per year. Up to 5 unused days carry over.) Tj T* (Sick leave: 10 days per year. A doctor's note is needed for more than 2 days in a row.) Tj T* (Refund policy: Customers get a full refund within 30 days of purchase. After 30 days, store credit only.) Tj T* (Refunds are processed within 7 business days.) Tj T* (Remote work: Up to 3 days a week after completing probation \(3 months\).) Tj T* ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000241 00000 n 
+0000000939 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1009
+%%EOF
